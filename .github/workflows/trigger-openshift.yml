@@ -1,0 +1,23 @@
+name: Trigger OpenShift Pipeline
+
+on:
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger OpenShift Pipeline
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"ref": "${{ github.ref_name }}", "repository": {"clone_url": "${{ github.event.repository.clone_url }}"}}' \
+            ${{ secrets.OPENSHIFT_PIPELINE_URL }}
+
+      - name: Log trigger status
+        run: |
+          echo "Triggered OpenShift pipeline for branch: ${{ github.ref_name }}"
+          echo "Repository: ${{ github.repository }}"
